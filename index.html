@@ -5,160 +5,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="./jquery-2.1.4.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    #playbox {
-      width: 60vh;
-      height: 60vh;
-      background-color: lightpink;
-      position: relative;
-      left: calc(50% - 30vh);
-    }
-
-    /* #game {
-      width: 45vh;
-      height: 35vh;
+    #start a {
       position: absolute;
-      top: 25vh;
-      left: 7.5vh;
-    } */
-
-    .card {
-      width: 75px;
-      height: 135px;
-      position: relative;
-      float: left;
-      margin: 10px;
-      /* 設定子元素在 3D 空間內 */
-      transform-style: preserve-3d;
-      transition: transform 1s;
+      left: calc(50% - 250px);
+      top: 20%;
+      width: 500px;
+      text-align: center;
+      display: block;
+      text-decoration: none;
+      font-weight: bolder;
+      font-size: 30px;
+      color: black;
     }
 
-    .card-front {
-      border-radius: 20px;
-      width: 100%;
-      height: 100%;
-      background-image: url(./role/10.jpg);
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+    iframe {
       position: absolute;
-      /* 隱藏背面 */
-      backface-visibility: hidden;
-    }
-
-    .card-back {
-      width: 100%;
-      height: 100%;
-      background-image: url(./role/back_1.jpg);
-      background-size: cover;
-      border-radius: 20px;
-      background-repeat: no-repeat;
-      background-position: center;
-      position: absolute;
-      transform: rotateY(180deg);
-      backface-visibility: hidden;
-    }
-
-    .card-close {
-      transform: rotateY(180deg);
+      left: calc(50% - 500px);
+      top: calc(50% - 250px);
+      width: 1000px;
+      height: 500px;
+      border: 1px solid black;
     }
   </style>
 </head>
 
 <body>
-  <!-- <div class="card">
-    <div class="card-front"></div>
-    <div class="card-back"></div>
-  </div> -->
-  <!-- 
-  <div id="playbox">
-    <input type="button" value="半透明" class="cheat">
-  </div> -->
-  <div id="game"></div>
-
-  <script>
-    // let time = 0
-
-    // $('.cheat').on('click', function () {
-    //   $('.cheat').attr({ value: '123' })
-    //   $(this).attr('disabled', true)
-    //   time = 5
-    //   timer = setInterval(function () {
-    //     console.log(time)
-    //     if (time > 1) {
-    //       time--
-    //       $('.card').fadeTo(500, 0.5)
-    //     } else if (time === 1) {
-    //       $('.card').fadeTo(500, 1)
-    //       clearInterval(timer)
-    //     }
-    //   }, 1000)
-    // })
-
-    for (let i = 0; i < 66; i++) {
-      $('#game').append(`
-      <div class="card card-close">
-        <div class="card-front"></div>
-        <div class="card-back"></div>
-        </div>
-        `)
-    }
-
-
-
-    // 決定每張的數字
-    $('.card').each(function (index) {
-      const number = index % 33 + 1
-      console.log(index, number)
-      $(this).find('.card-front').css('background-image', `url(./role/${index + 1}.jpg)`)
-      // data- 將資料儲存在標籤裡面，後面接的 number 是自己定義的名稱
-      $(this).attr('data-number', number)
-    })
-
-    // 打亂
-    for (let i = 0; i < 20; i++) {
-      const randomA = Math.round(Math.random() * 65)
-      const randomB = Math.round(Math.random() * 65)
-      $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
-    }
-
-    // 翻牌
-    $('#game').on('click', '.card', function () {
-      if (
-        // .card 沒有 .card-close 代表被翻開
-        // 如果已翻開張數小於兩張
-        $('.card:not(.card-close)').length < 2 &&
-        // 且這張牌還沒翻開
-        $(this).hasClass('card-close') &&
-        // 這張牌還沒配對
-        !$(this).hasClass('card-ok')
-      ) {
-        $(this).removeClass('card-close')
-      }
-
-      if ($('.card:not(.card-close)').length === 2) {
-        if (
-          $('.card:not(.card-close)').eq(0).attr('data-number') ===
-          $('.card:not(.card-close)').eq(1).attr('data-number')
-        ) {
-          $('.card:not(.card-close)').addClass('card-ok')
-          $('.card:not(.card-close)').fadeTo(1000, 0)
-        }
-
-        setTimeout(function () {
-          $('.card:not(.card-close)').addClass('card-close')
-          if ($('.card-ok').length === $('.card').length) {
-            alert('過關')
-          }
-        }, 1000);
-      }
-    })
-  </script>
+  <div id="start"><a href="./levelmax.html" target="iframe">原神啟動</a></div>
+  <iframe src="" frameborder="0" name="iframe"></iframe>
 </body>
 
 </html>
