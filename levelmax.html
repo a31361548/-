@@ -19,13 +19,7 @@
       left: calc(50% - 30vh);
     }
 
-    /* #game {
-      width: 45vh;
-      height: 35vh;
-      position: absolute;
-      top: 25vh;
-      left: 7.5vh;
-    } */
+
 
     .card {
       width: 75px;
@@ -100,7 +94,7 @@
     })
 
     // 打亂
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 100; i++) {
       const randomA = Math.round(Math.random() * 65)
       const randomB = Math.round(Math.random() * 65)
       $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
