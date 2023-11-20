@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="./jquery-2.1.4.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'
+    integrity='sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=='
+    crossorigin='anonymous'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js'
+    integrity='sha512-zB7yJLSASiSevQmWCrQaq+z/f5zRIa884hwWgmK1oI3MfolIzKcpDtyfBsrGqUi/hMCObVwr/+SZTByOqh0zkQ=='
+    crossorigin='anonymous'></script>
   <style>
     * {
       box-sizing: border-box;
@@ -14,9 +20,9 @@
     #game {
       position: absolute;
       left: calc(50% - 700px);
-      top: calc(50% - 400px);
-      width: 1400px;
-      height: 800px;
+      top: calc(50% - 550px);
+      width: 1480px;
+      height: 1055px;
     }
 
     #start {
@@ -26,13 +32,13 @@
 
 
     .card {
-      width: 75px;
-      height: 135px;
+      width: 125px;
+      height: 175px;
       position: relative;
       float: left;
       margin: 10px;
       transform-style: preserve-3d;
-      transition: transform 1s;
+      transition: transform 0.7s;
     }
 
     .card-front {
@@ -42,7 +48,7 @@
       background-image: url(./role/10.jpg);
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: center;
+      background-position: center 5px;
       position: absolute;
       backface-visibility: hidden;
     }
@@ -63,30 +69,23 @@
     .card-close {
       transform: rotateY(180deg);
     }
+
+    p {
+      font-size: 24px;
+    }
   </style>
 </head>
 
 <body>
-  <div id="start"><img src="./planb/test.jpg" alt=""></div>
-  <p>分數：<span id="text-score">0</span></p>
+  <input type="button" id="start"
+    style=" background-image:url(./planb/test.jpg); background-repeat: no-repeat; width: 100px; height: 150px; border: none; background-size: cover;">
   <p>耗時： <span id="text-time">0秒</span></p>
-  <p>最高分玩家: <span id="text-hsname">-</span></p>
-  <p>最高分數: <span id="text-hsscore">0</span></p>
+  <p>最高分玩家: <span id="text-htname">-</span></p>
+  <p>最快秒數: <span id="text-httime">0</span></p>
   <div id="game"></div>
 
   <script>
-    let score = 0
-    let time = 0
-    let timer = 0
-
-    $('#start').click(function () {
-      timer = setInterval(function () {
-        time++
-        $('#text-time').text(time + '秒')
-      }, 1000)
-    })
-
-    for (let i = 0; i < 66; i++) {
+    for (let i = 0; i < 60; i++) {
       $('#game').append(`
       <div class="card card-close">
         <div class="card-front"></div>
@@ -95,51 +94,122 @@
         `)
     }
 
-
-
-    $('.card').each(function (index) {
-      const number = index % 33 + 1
-      console.log(index, number)
-      $(this).find('.card-front').css('background-image', `url(./role/${index + 1}.jpg)`)
-      $(this).attr('data-number', number)
-    })
-
-    // 隨機
-    for (let i = 0; i < 100; i++) {
-      const randomA = Math.round(Math.random() * 65)
-      const randomB = Math.round(Math.random() * 65)
-      $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
+    let score = 0
+    let time = 0
+    let timer = 0
+    const ht = {
+      name: '-',
+      time: 0
     }
 
-    // 翻牌
-    $('#game').on('click', '.card', function () {
-      if (
-        $('.card:not(.card-close)').length < 2 &&
-        $(this).hasClass('card-close') &&
-        !$(this).hasClass('card-ok')
-      ) {
-        $(this).removeClass('card-close')
+    if (localStorage.ht) {
+      const data = JSON.parse(localStorage.ht)
+      ht.name = data.name
+      ht.time = data.time
+      $('#text-htname').text(ht.name)
+      $('#text-httime').text(ht.time)
+    }
+
+    // 開始
+    $('#start').click(function () {
+      // 停用開始
+      $(this).attr('disabled', true)
+      timer = setInterval(function () {
+        time++
+        $('#text-time').text(time + '秒')
+
+        const _this = this
+        if ($('.card-ok').length === $('.card').length) {
+          clearInterval(timer)
+          $(_this).attr('disabled', false)
+          $('#game').empty()
+
+          if (time < ht.time) {
+            Swal.fire({
+              icon: 'success',
+              title: '過關',
+              text: `歷史最快，你花了${time}秒`,
+              // input 的 type
+              input: 'text',
+              // input 的其他屬性
+              inputAttributes: {
+                required: true
+              },
+              inputPlaceholder: '請輸入玩家暱稱',
+              // 驗證錯誤時顯示的文字
+              validationMessage: '請輸入玩家暱稱',
+              // 不允許點擊外面關閉對話框
+              allowOutsideClick: false,
+              // 不允許按 Esc 關閉對話框
+              allowEscapeKey: false
+            }).then(function (result) {
+              ht.time = time
+              ht.name = result.value
+              $('#text-hsname').text(ht.name)
+              $('#text-hstime').text(ht.time)
+
+              // localStorage.setItem(名稱,文字)
+              // localStorage.名稱 = 文字
+              // JSON.stringify 將陣列或物件轉文字
+              // JSON.parse 將文字陣列變可用陣列
+              localStorage.ht = JSON.stringify(ht)
+            })
+          } else {
+            Swal.fire({
+              icon: 'info',
+              title: '過關',
+              text: `你花了${time}秒`
+            })
+          }
+        }
+      }, 1000)
+      $('.card').each(function (index) {
+        const number = index % 30 + 1
+        console.log(index, number)
+        $(this).find('.card-front').css('background-image', `url(./role/${index + 1}.jpg)`)
+        $(this).attr('data-number', number)
+      })
+
+      // 隨機
+      for (let i = 0; i < 100; i++) {
+        const randomA = Math.round(Math.random() * 59)
+        const randomB = Math.round(Math.random() * 59)
+        $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
       }
 
-      if ($('.card:not(.card-close)').length === 2) {
+      // 翻牌
+      $('#game').on('click', '.card', function () {
         if (
-          $('.card:not(.card-close)').eq(0).attr('data-number') ===
-          $('.card:not(.card-close)').eq(1).attr('data-number')
+          $('.card:not(.card-close)').length < 2 &&
+          $(this).hasClass('card-close') &&
+          !$(this).hasClass('card-ok')
         ) {
-          $('.card:not(.card-close)').addClass('card-ok')
-          $('.card:not(.card-close)').fadeTo(1000, 0)
-          score++
-          $('#text-score').text(score)
+          $(this).removeClass('card-close')
         }
 
-        setTimeout(function () {
-          $('.card:not(.card-close)').addClass('card-close')
-          if ($('.card-ok').length === $('.card').length) {
-            alert('過關')
+        if ($('.card:not(.card-close)').length === 2) {
+          if (
+            $('.card:not(.card-close)').eq(0).attr('data-number') ===
+            $('.card:not(.card-close)').eq(1).attr('data-number')
+          ) {
+            $('.card:not(.card-close)').addClass('card-ok')
+            $('.card:not(.card-close)').fadeTo(1000, 0)
+            score++
+            console.log(score)
           }
-        }, 1000);
-      }
+
+          setTimeout(function () {
+            $('.card:not(.card-close)').addClass('card-close')
+            if ($('.card-ok').length === $('.card').length) {
+            }
+          }, 1000);
+        }
+      })
     })
+
+
+
+
   </script>
 </body>
 
