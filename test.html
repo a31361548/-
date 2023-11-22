@@ -45,7 +45,7 @@
       border-radius: 20px;
       width: 100%;
       height: 100%;
-      background-image: url(./role/10.jpg);
+      background-image: url(./easy/1.jpg);
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center 5px;
@@ -80,108 +80,64 @@
   <input type="button" id="start"
     style=" background-image:url(./planb/test.jpg); background-repeat: no-repeat; width: 100px; height: 150px; border: none; background-size: cover;">
   <p>耗時： <span id="text-time">0秒</span></p>
-  <p>最高分玩家: <span id="text-htname">-</span></p>
-  <p>最快秒數: <span id="text-httime">0</span></p>
+  <p>最高分玩家: <span id="text-eltname">-</span></p>
+  <p>最快秒數: <span id="text-elttime">0</span></p>
   <div id="game"></div>
-
   <script>
-    for (let i = 0; i < 60; i++) {
-      $('#game').append(`
-      <div class="card card-close">
-        <div class="card-front"></div>
-        <div class="card-back"></div>
-        </div>
-        `)
-    }
-
-    let score = 0
     let time = 0
     let timer = 0
-    const ht = {
+    const elt = {
       name: '-',
       time: 0
     }
 
-    if (localStorage.ht) {
-      const data = JSON.parse(localStorage.ht)
-      ht.name = data.name
-      ht.time = data.time
-      $('#text-htname').text(ht.name)
-      $('#text-httime').text(ht.time)
+    if (localStorage.elt) {
+      const data = JSON.parse(localStorage.elt)
+      elt.name = data.name
+      elt.time = data.time
+      $('#text-eltname').text(elt.name)
+      $('#text-elttime').text(elt.time)
     }
 
-    // 開始
+    for (let i = 0; i < 10; i++) {
+      $('#game').append(`
+    <div class="card card-close">
+      <div class="card-front"></div>
+      <div class="card-back"></div>
+    </div>
+    `)
+    }
+
     $('#start').click(function () {
-      // 停用開始
-      $(this).attr('disabled', true)
-      timer = setInterval(function () {
-        time++
-        $('#text-time').text(time + '秒')
+      $('#start').attr('disabled', true)
+      time = 0
+      $('#text-time').text(time)
 
-        const _this = this
-        if ($('.card-ok').length === $('.card').length) {
-          clearInterval(timer)
-          $(_this).attr('disabled', false)
-          $('#game').empty()
-
-          if (time < ht.time) {
-            Swal.fire({
-              icon: 'success',
-              title: '過關',
-              text: `歷史最快，你花了${time}秒`,
-              // input 的 type
-              input: 'text',
-              // input 的其他屬性
-              inputAttributes: {
-                required: true
-              },
-              inputPlaceholder: '請輸入玩家暱稱',
-              // 驗證錯誤時顯示的文字
-              validationMessage: '請輸入玩家暱稱',
-              // 不允許點擊外面關閉對話框
-              allowOutsideClick: false,
-              // 不允許按 Esc 關閉對話框
-              allowEscapeKey: false
-            }).then(function (result) {
-              ht.time = time
-              ht.name = result.value
-              $('#text-hsname').text(ht.name)
-              $('#text-hstime').text(ht.time)
-
-              // localStorage.setItem(名稱,文字)
-              // localStorage.名稱 = 文字
-              // JSON.stringify 將陣列或物件轉文字
-              // JSON.parse 將文字陣列變可用陣列
-              localStorage.ht = JSON.stringify(ht)
-            })
-          } else {
-            Swal.fire({
-              icon: 'info',
-              title: '過關',
-              text: `你花了${time}秒`
-            })
-          }
-        }
-      }, 1000)
+      // 決定每張的數字
       $('.card').each(function (index) {
-        const number = index % 30 + 1
+        const number = index % 5 + 1
         console.log(index, number)
-        $(this).find('.card-front').css('background-image', `url(./role/${index + 1}.jpg)`)
+        $(this).find('.card-front').css('background-image', `url(./easy/${index + 1}.jpg)`)
+        // data- 將資料儲存在標籤裡面，後面接的 number 是自己定義的名稱
         $(this).attr('data-number', number)
       })
 
-      // 隨機
-      for (let i = 0; i < 100; i++) {
-        const randomA = Math.round(Math.random() * 59)
-        const randomB = Math.round(Math.random() * 59)
+      // 打亂
+      for (let i = 0; i < 58; i++) {
+        const randomA = Math.round(Math.random() * 9)
+        const randomB = Math.round(Math.random() * 9)
         $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
       }
 
       // 翻牌
       $('#game').on('click', '.card', function () {
         if (
+          // .card 沒有 .card-close 代表被翻開
+          // 如果已翻開張數小於兩張
           $('.card:not(.card-close)').length < 2 &&
+          // 且這張牌還沒翻開
           $(this).hasClass('card-close') &&
+          // 這張牌還沒配對
           !$(this).hasClass('card-ok')
         ) {
           $(this).removeClass('card-close')
@@ -203,9 +159,55 @@
           }, 1000);
         }
       })
+
+      timer = setInterval(function () {
+        time++
+        $('#text-time').text(time + '秒')
+        if ($('.card-ok').length === $('.card').length) {
+          clearInterval(timer)
+          $('#start').attr('disabled', false)
+          // $('#game').empty()
+
+          if (time < elt.time) {
+            Swal.fire({
+              icon: 'success',
+              title: '過關',
+              text: `歷史最快，你花了${time}秒`,
+              // input 的 type
+              input: 'text',
+              // input 的其他屬性
+              inputAttributes: {
+                required: true
+              },
+              inputPlaceholder: '請輸入玩家暱稱',
+              // 驗證錯誤時顯示的文字
+              validationMessage: '請輸入玩家暱稱',
+              // 不允許點擊外面關閉對話框
+              allowOutsideClick: false,
+              // 不允許按 Esc 關閉對話框
+              allowEscapeKey: false
+            }).then(function (result) {
+              elt.time = time
+              elt.name = result.value
+              $('#text-eltname').text(elt.name)
+              $('#text-elttime').text(elt.time)
+
+              // localStorage.setItem(名稱,文字)
+              // localStorage.名稱 = 文字
+              // JSON.stringify 將陣列或物件轉文字
+              // JSON.parse 將文字陣列變可用陣列
+              localStorage.elt = JSON.stringify(elt)
+            })
+          } else {
+            Swal.fire({
+              icon: 'info',
+              title: '過關',
+              text: `你花了${time}秒`
+            })
+          }
+        }
+      }, 1000)
     })
-
-
 
 
   </script>
