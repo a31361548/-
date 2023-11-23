@@ -58,6 +58,9 @@
       width: 1480px;
       height: 800px;
       /* border: 1px solid black; */
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     #start {
@@ -146,6 +149,7 @@
       top: 30%;
       width: 10vw;
       height: 5vh;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -185,17 +189,18 @@
         $('#reload').click(function () {
           location.reload()
         })
-        $('#game').css({ width: '1250px', height: '800px', position: 'absolute', left: 'calc(50% - 600px)', top: 'calc(50% - 400px)' })
+        $('#game').css({ width: '1450px', height: '800px', position: 'absolute', left: 'calc(50% - 600px)', top: 'calc(50% - 400px)' })
         $('#topbt').css('display', 'none')
         for (let i = 0; i < 20; i++) {
           $('#game').append(`
-<div class="card card-close">
-  <div class="card-front"></div>
-  <div class="card-back"></div>
-</div>
-`)
+          <div class="card card-close">
+            <div class="card-front"></div>
+            <div class="card-back"></div>
+            </div>
+            `)
         }
 
+        $('.card').css({ width: '120px', height: '158px' })
         $('.card').each(function (index) {
           const number = index % 10 + 1
           console.log(index, number)
