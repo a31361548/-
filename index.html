@@ -12,18 +12,25 @@
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    body {
+    #main {
       background-image: url(./bg/bg1.jpg);
+      width: 100vw;
+      height: 100vh;
     }
 
     #b {
-      width: 350px;
-      height: 650px;
+      width: 50%;
+      height: 100%;
       /* border: 1px solid black; */
       position: absolute;
-      top: 225px;
+      bottom: 0;
+      right: 0;
+      display: none;
+      z-index: 1;
     }
 
     #b>img {
@@ -37,19 +44,31 @@
       object-position: 60%;
     }
 
+    .object {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* object-position: 60%; */
+    }
+
     #game {
       position: absolute;
-      left: calc(50% - 600px);
+      left: calc(50% - 740px);
       top: calc(50% - 400px);
       width: 1480px;
       height: 800px;
-      border: 1px solid black;
+      /* border: 1px solid black; */
     }
 
     #start {
-      width: 150px;
-      height: 175px;
+      position: absolute;
+      width: 400px;
+      height: 600px;
+      left: calc(50% - 200px);
+      top: calc(50% - 300px);
       cursor: pointer;
+      /* border: 1px solid black; */
+      z-index: 3;
     }
 
 
@@ -74,7 +93,6 @@
       background-position: center 5px;
       position: absolute;
       backface-visibility: hidden;
-      user-select: ;
     }
 
     .card-back {
@@ -100,114 +118,315 @@
     }
 
     #topbt {
-      width: 80vw;
-      height: 6vh;
+      width: 30vw;
+      height: 60vh;
       position: absolute;
-      left: 8vw;
+      top: 20vh;
+      left: 40vw;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-around;
+      align-items: center;
+      z-index: 2;
     }
 
     #topbt>input {
-      width: 100px;
+      width: 100%;
+      height: 15%;
+      cursor: pointer;
+      color: red;
+      font-size: 24px;
+      font-weight: bolder;
+      text-shadow: 1px 1px 2px yellow;
+    }
+
+    #reload {
+      position: absolute;
+      transform: translate(0, -50);
+      top: 30%;
+      width: 10vw;
+      height: 5vh;
     }
   </style>
 </head>
 
 <body>
-  <div id="b">
-    <img src="./大圖/b1.png" class="object-fit">
-  </div>
-  <div id="hard"></div>
-  <div id="topbt">
+  <div id="main">
     <div id="topbt">
-      <input type="button" value="簡單">
-      <input type="button" value="普通">
-      <input type="button" value="困難">
+      <input type="button" value="簡單" id="easy" style="background-image: url(./模式/easy.jpg); background-size: cover;">
+      <input type="button" value="普通" id="normal"
+        style="background-image: url(./模式/normal.jpg); background-size: cover;">
+      <input type="button" value="困難" id="hard" style="background-image: url(./模式/hard.jpg); background-size: cover;">
     </div>
-  </div>
-  <div id="start">
-    <img src="./role/back.png" class="object-fit">
-  </div>
-  <div id="game"></div>
-  <script>
-    let time = 0
-    let timer = 0
-
-
-    $('#start').click(function () {
-      $('#start').css('display', 'none')
-      // location.reload()
-      for (let i = 0; i < 60; i++) {
-        $('#game').append(`
-      <div class="card card-close">
-        <div class="card-front"></div>
-        <div class="card-back"></div>
+    <div id="start">
+      <img src="./role/back.png" class="object">
+    </div>
+    <input type="button" value="回首頁" id="reload">
+    <div id="game">
+      <div id="b">
+        <img src="./大圖/b1.png" class="object-fit">
       </div>
-      `)
-      }
+    </div>
+    <script>
+      let time = 0
+      let timer = 0
+      $('#topbt').css('display', 'none')
+      $('#reload').css('display', 'none')
 
-      $('.card').each(function (index) {
-        const number = index % 30 + 1
-        console.log(index, number)
-        if (index >= 0 && index <= 29) {
-          $(this).find('.card-front').css('background-image', `url(./role/${number}.jpg)`)
-        }
-        if (index > 29 && index <= 59) {
-          $(this).find('.card-front').css('background-image', `url(./role/a${number}.jpg)`)
-        }
-        $(this).attr('data-number', number)
+      // 開始、選擇模式
+      $('#start').click(function () {
+        $('#start').css('display', 'none')
+        $('#topbt').fadeTo(1000, 1)
       })
 
-      // 打亂
-      for (let i = 0; i < 100; i++) {
-        const randomA = Math.round(Math.random() * 66)
-        const randomB = Math.round(Math.random() * 58)
-        $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
-      }
-
-      // 翻牌
-      $('#game').on('click', '.card', function () {
-        if (
-          $('.card:not(.card-close)').length < 2 &&
-          // 且這張牌還沒翻開
-          $(this).hasClass('card-close') &&
-          // 這張牌還沒配對
-          !$(this).hasClass('card-ok')
-        ) {
-          $(this).removeClass('card-close')
+      // 簡單
+      $('#easy').click(function () {
+        $('#reload').fadeTo(1000, 1)
+        $('#reload').click(function () {
+          location.reload()
+        })
+        $('#game').css({ width: '1250px', height: '800px', position: 'absolute', left: 'calc(50% - 600px)', top: 'calc(50% - 400px)' })
+        $('#topbt').css('display', 'none')
+        for (let i = 0; i < 20; i++) {
+          $('#game').append(`
+<div class="card card-close">
+  <div class="card-front"></div>
+  <div class="card-back"></div>
+</div>
+`)
         }
-        const bg = $('.card:not(.card-close)').attr('data-number')
 
-        if ($('.card:not(.card-close)').length === 2) {
-          if (
-            $('.card:not(.card-close)').eq(0).attr('data-number') ===
-            $('.card:not(.card-close)').eq(1).attr('data-number')
-          ) {
-            $('.card:not(.card-close)').addClass('card-ok')
-            $('.card:not(.card-close)').fadeTo(1000, 0)
-            $('.object-fit').attr({ src: `./大圖/b${bg}.png` })
-            $('.object-fit').css('display', 'block')
-            $('#start').css('display', 'none')
-
+        $('.card').each(function (index) {
+          const number = index % 10 + 1
+          console.log(index, number)
+          if (index >= 0 && index <= 9) {
+            $(this).find('.card-front').css('background-image', `url(./easy/${number}.jpg)`)
           }
+          if (index > 9 && index <= 19) {
+            $(this).find('.card-front').css('background-image', `url(./easy/a${number}.jpg)`)
+          }
+          $(this).attr('data-number', number)
+        })
 
-          setTimeout(function () {
-            $('.card:not(.card-close)').addClass('card-close')
-            if ($('.card-ok').length === $('.card').length) {
-              Swal.fire({
-                icon: 'info',
-                title: '過關',
-                text: `你花了${time}秒`
-              })
-            }
-          }, 1000);
+        // 打亂
+        for (let i = 0; i < 100; i++) {
+          const randomA = Math.round(Math.random() * 66)
+          const randomB = Math.round(Math.random() * 58)
+          $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
         }
+
+        // 翻牌
+        $('#game').on('click', '.card', function () {
+          if (
+            $('.card:not(.card-close)').length < 2 &&
+            // 且這張牌還沒翻開
+            $(this).hasClass('card-close') &&
+            // 這張牌還沒配對
+            !$(this).hasClass('card-ok')
+          ) {
+            $(this).removeClass('card-close')
+          }
+          const bg = $('.card:not(.card-close)').attr('data-number')
+
+          if ($('.card:not(.card-close)').length === 2) {
+            if (
+              $('.card:not(.card-close)').eq(0).attr('data-number') ===
+              $('.card:not(.card-close)').eq(1).attr('data-number')
+            ) {
+              $('.card:not(.card-close)').addClass('card-ok')
+              $('.card:not(.card-close)').fadeTo(1000, 0)
+              $('#b').css('display', 'block')
+              $('.object-fit').attr({ src: `./大圖/b${bg}.png` })
+              $('.object-fit').fadeTo(1000, 1)
+              $('#b').css('z-index', '1')
+              setTimeout(() => {
+                $('.object-fit').fadeTo(2000, 0)
+                $('#b').css('z-index', '-1')
+              }, 2000);
+              clearTimeout()
+            }
+
+            setTimeout(function () {
+              $('.card:not(.card-close)').addClass('card-close')
+              if ($('.card-ok').length === $('.card').length) {
+                $('#start').css('display', 'block')
+                Swal.fire({
+                  icon: 'info',
+                  title: '過關'
+                })
+              }
+            }, 1000);
+          }
+        })
       })
-    })
+
+      // 普通
+      $('#normal').click(function () {
+        $('#reload').fadeTo(1000, 1)
+        $('#reload').click(function () {
+          location.reload()
+        })
+        $('#main').css('background', 'url(./bg/bg2.jpg)')
+        $('#game').css({ width: '1250px', height: '800px', position: 'absolute', left: 'calc(50% - 600px)', top: 'calc(50% - 400px)' })
+        $('#topbt').css('display', 'none')
+        for (let i = 0; i < 40; i++) {
+          $('#game').append(`
+<div class="card card-close">
+  <div class="card-front"></div>
+  <div class="card-back"></div>
+</div>
+`)
+        }
+
+        $('.card').each(function (index) {
+          const number = index % 20 + 1
+          console.log(index, number)
+          if (index >= 0 && index <= 19) {
+            $(this).find('.card-front').css('background-image', `url(./normal/${number}.jpg)`)
+          }
+          if (index > 19 && index <= 39) {
+            $(this).find('.card-front').css('background-image', `url(./normal/a${number}.jpg)`)
+          }
+          $(this).attr('data-number', number)
+        })
+
+        // 打亂
+        for (let i = 0; i < 100; i++) {
+          const randomA = Math.round(Math.random() * 66)
+          const randomB = Math.round(Math.random() * 58)
+          $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
+        }
+
+        // 翻牌
+        $('#game').on('click', '.card', function () {
+          if (
+            $('.card:not(.card-close)').length < 2 &&
+            // 且這張牌還沒翻開
+            $(this).hasClass('card-close') &&
+            // 這張牌還沒配對
+            !$(this).hasClass('card-ok')
+          ) {
+            $(this).removeClass('card-close')
+          }
+          const bg = $('.card:not(.card-close)').attr('data-number')
+
+          if ($('.card:not(.card-close)').length === 2) {
+            if (
+              $('.card:not(.card-close)').eq(0).attr('data-number') ===
+              $('.card:not(.card-close)').eq(1).attr('data-number')
+            ) {
+              $('.card:not(.card-close)').addClass('card-ok')
+              $('.card:not(.card-close)').fadeTo(1000, 0)
+              $('#b').css('display', 'block')
+              $('.object-fit').attr({ src: `./大圖/b${bg}.png` })
+              $('.object-fit').fadeTo(1000, 1)
+              $('#b').css('z-index', '1')
+              setTimeout(() => {
+                $('.object-fit').fadeTo(2000, 0)
+                $('#b').css('z-index', '-1')
+              }, 2000);
+              clearTimeout()
+            }
+
+            setTimeout(function () {
+              $('.card:not(.card-close)').addClass('card-close')
+              if ($('.card-ok').length === $('.card').length) {
+                $('#start').css('display', 'block')
+                Swal.fire({
+                  icon: 'info',
+                  title: '過關'
+                })
+              }
+            }, 1000);
+          }
+        })
+      })
+
+      // 困難
+      $('#hard').click(function () {
+        $('#reload').fadeTo(1000, 1)
+        $('#reload').click(function () {
+          location.reload()
+        })
+        $('#topbt').css('display', 'none')
+        $('#main').css('background', 'url(./bg/bg3.jpg)')
+        for (let i = 0; i < 60; i++) {
+          $('#game').append(`
+<div class="card card-close">
+  <div class="card-front"></div>
+  <div class="card-back"></div>
+</div>
+`)
+        }
+
+        $('.card').each(function (index) {
+          const number = index % 30 + 1
+          console.log(index, number)
+          if (index >= 0 && index <= 29) {
+            $(this).find('.card-front').css('background-image', `url(./role/${number}.jpg)`)
+          }
+          if (index > 29 && index <= 59) {
+            $(this).find('.card-front').css('background-image', `url(./role/a${number}.jpg)`)
+          }
+          $(this).attr('data-number', number)
+        })
+
+        // 打亂
+        for (let i = 0; i < 100; i++) {
+          const randomA = Math.round(Math.random() * 66)
+          const randomB = Math.round(Math.random() * 58)
+          $('.card').eq(randomA).insertAfter($('.card').eq(randomB))
+        }
+
+        // 翻牌
+        $('#game').on('click', '.card', function () {
+          if (
+            $('.card:not(.card-close)').length < 2 &&
+            // 且這張牌還沒翻開
+            $(this).hasClass('card-close') &&
+            // 這張牌還沒配對
+            !$(this).hasClass('card-ok')
+          ) {
+            $(this).removeClass('card-close')
+          }
+          const bg = $('.card:not(.card-close)').attr('data-number')
+
+          if ($('.card:not(.card-close)').length === 2) {
+            if (
+              $('.card:not(.card-close)').eq(0).attr('data-number') ===
+              $('.card:not(.card-close)').eq(1).attr('data-number')
+            ) {
+              $('.card:not(.card-close)').addClass('card-ok')
+              $('.card:not(.card-close)').fadeTo(1000, 0)
+              $('#b').css('display', 'block')
+              $('.object-fit').attr({ src: `./大圖/b${bg}.png` })
+              $('.object-fit').fadeTo(1000, 1)
+              $('#b').css('z-index', '1')
+              setTimeout(() => {
+                $('.object-fit').fadeTo(2000, 0)
+                $('#b').css('z-index', '-1')
+              }, 2000);
+              clearTimeout()
+
+            }
+
+            setTimeout(function () {
+              $('.card:not(.card-close)').addClass('card-close')
+              if ($('.card-ok').length === $('.card').length) {
+                $('#start').css('display', 'block')
+                Swal.fire({
+                  icon: 'info',
+                  title: '過關'
+                })
+              }
+            }, 1000);
+          }
+        })
+      })
 
 
-  </script>
+    </script>
+  </div>
 </body>
 
 </html>
