@@ -14,6 +14,10 @@
       box-sizing: border-box;
     }
 
+    body {
+      background-image: url(./bg/bg1.jpg);
+    }
+
     #b {
       width: 350px;
       height: 650px;
@@ -43,6 +47,8 @@
     }
 
     #start {
+      width: 150px;
+      height: 175px;
       cursor: pointer;
     }
 
@@ -68,6 +74,7 @@
       background-position: center 5px;
       position: absolute;
       backface-visibility: hidden;
+      user-select: ;
     }
 
     .card-back {
@@ -85,10 +92,24 @@
 
     .card-close {
       transform: rotateY(180deg);
+
     }
 
     p {
       font-size: 24px;
+    }
+
+    #topbt {
+      width: 80vw;
+      height: 6vh;
+      position: absolute;
+      left: 8vw;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    #topbt>input {
+      width: 100px;
     }
   </style>
 </head>
@@ -97,9 +118,17 @@
   <div id="b">
     <img src="./大圖/b1.png" class="object-fit">
   </div>
-  <input type="button" id="start"
-    style=" background-image:url(./planb/test.jpg); background-repeat: no-repeat; width: 100px; height: 150px; border: none; background-size: cover;">
-  <p>耗時： <span id="text-time">0秒</span></p>
+  <div id="hard"></div>
+  <div id="topbt">
+    <div id="topbt">
+      <input type="button" value="簡單">
+      <input type="button" value="普通">
+      <input type="button" value="困難">
+    </div>
+  </div>
+  <div id="start">
+    <img src="./role/back.png" class="object-fit">
+  </div>
   <div id="game"></div>
   <script>
     let time = 0
@@ -107,10 +136,8 @@
 
 
     $('#start').click(function () {
-      $('#start').attr('disabled', true)
-      time = 0
-      $('#text-time').text(time)
-
+      $('#start').css('display', 'none')
+      // location.reload()
       for (let i = 0; i < 60; i++) {
         $('#game').append(`
       <div class="card card-close">
@@ -161,32 +188,22 @@
             $('.card:not(.card-close)').fadeTo(1000, 0)
             $('.object-fit').attr({ src: `./大圖/b${bg}.png` })
             $('.object-fit').css('display', 'block')
+            $('#start').css('display', 'none')
 
           }
 
           setTimeout(function () {
             $('.card:not(.card-close)').addClass('card-close')
             if ($('.card-ok').length === $('.card').length) {
+              Swal.fire({
+                icon: 'info',
+                title: '過關',
+                text: `你花了${time}秒`
+              })
             }
           }, 1000);
         }
       })
-
-      timer = setInterval(function () {
-        time++
-        $('#text-time').text(time + '秒')
-        if ($('.card-ok').length === $('.card').length) {
-          clearInterval(timer)
-          $('#start').attr('disabled', false)
-          $('#game').empty()
-
-          Swal.fire({
-            icon: 'info',
-            title: '過關',
-            text: `你花了${time}秒`
-          })
-        }
-      }, 1000)
     })
 
 
